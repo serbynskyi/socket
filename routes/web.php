@@ -12,4 +12,8 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
+Route::get('/chat', function () {
+    return view('chat');
+})->middleware(['auth', 'verified'])->name('chat');
+
 require __DIR__.'/auth.php';

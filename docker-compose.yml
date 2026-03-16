@@ -29,8 +29,10 @@ services:
       dockerfile: docker/php/Dockerfile
     command: php artisan queue:work --sleep=3 --tries=3
     depends_on:
-      - mysql
-      - redis
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     env_file:
       - .env
     restart: unless-stopped
@@ -59,6 +61,11 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   redis:
     image: redis:alpine
@@ -66,6 +73,11 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
 volumes:
   mysql_data:
