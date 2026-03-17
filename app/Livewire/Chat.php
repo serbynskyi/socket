@@ -74,10 +74,10 @@ class Chat extends Component
 
     public function render()
     {
-//        $users = User::where('id', '!=', auth()->id())
-//            ->orderBy('name')
-//            ->get(['id', 'name']);
+        $users = User::where('id', '!=', auth()->id())
+            ->orderBy('name')
+            ->get(['id', 'name']);
 
-        return view('livewire.chat');
+        return view('livewire.chat', compact('users'));
     }
 }
