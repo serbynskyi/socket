@@ -19,7 +19,7 @@
             @if($receiverId)
                 <div style="height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">
                     @foreach($messages as $message)
-                        <div>
+                        <div style="{{ !$message['delivered'] && $message['receiver_id'] == auth()->id() ? 'font-weight: bold;' : '' }}">
                             <strong>{{ $message['sender']['name'] }}</strong>:
                             {{ $message['body'] }}
                             <small>{{ $message['created_at'] }}</small>
@@ -50,13 +50,17 @@
             .listen('.message.sent', (e) => {
                 if (e.sender_id == @this.receiverId) {
                     @this.messages.push({
+                        id: e.id,
                         sender: { name: e.sender_name },
+                        sender_id: e.sender_id,
+                        receiver_id: {{ auth()->id() }},
                         body: e.body,
+                        delivered: false,
                         created_at: e.created_at,
                     });
-                }
 
-                @this.call('markDelivered', e.id);
+                    @this.call('markDelivered', e.id);
+                }
             });
     });
 </script>

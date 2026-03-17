@@ -13,13 +13,6 @@ class Chat extends Component
     public ?int $receiverId = null;
     public array $messages = [];
 
-    public function mount(): void
-    {
-        if ($this->receiverId) {
-            $this->loadMessages();
-        }
-    }
-
     public function selectUser(int $userId): void
     {
         $this->receiverId = $userId;
@@ -42,6 +35,11 @@ class Chat extends Component
             ->orderBy('created_at')
             ->get()
             ->toArray();
+
+        Message::where('receiver_id', $authId)
+            ->where('sender_id', $this->receiverId)
+            ->where('delivered', false)
+            ->update(['delivered' => true]);
     }
 
     public function send(): void
